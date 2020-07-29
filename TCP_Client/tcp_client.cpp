@@ -11,14 +11,9 @@ TCP_Client::TCP_Client(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle("TCP客户端");
     isconnected = false;
-    tcp_socket = new QTcpSocket();
-
-
-    connect(ui->pushButton_2,SIGNAL(clicked()),this,SLOT(slot_init()));  //发起连接
+    ui->pushButton->setEnabled(false);
 
     connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(slot_sendMsg()));  //发送信息
-
-    connect(ui->pushButton_3,SIGNAL(clicked()),this,SLOT(slot_disconnected())); //中断连接
 }
 
 TCP_Client::~TCP_Client()
@@ -27,35 +22,47 @@ TCP_Client::~TCP_Client()
 }
 
 
-
-void TCP_Client::slot_init()
+//处理接入&断开按钮的槽函数
+void TCP_Client::on_pushButton_2_clicked()
 {
-    tcp_socket = new QTcpSocket();
-    tcp_socket->abort();//重置套接字
-    tcp_socket->connectToHost("127.0.0.1",9999);
-    connect(tcp_socket,SIGNAL(connected()),this,SLOT(slot_connected()));   //建立连接
+    if(!isconnected){
+        tcp_socket = new QTcpSocket();
+        tcp_socket->abort();//重置套接字
+        ui->lineEdit_3->setText("127.0.0.1");
+        ui->lineEdit_4->setText("9999");
+        ip = ui->lineEdit_3->text();
+        port = ui->lineEdit_4->text().toInt();
+        tcp_socket->connectToHost(ip,port);
+        connect(tcp_socket,SIGNAL(connected()),this,SLOT(slot_connected()));  //建立连接
+        connect(tcp_socket,SIGNAL(readyRead()),this,SLOT(slot_recvMsg()));    //接受信息
+        connect(tcp_socket,SIGNAL(disconnected()),this,SLOT(slot_disconnected())); //服务器中断连接
+    }
+    else{
+        ui->pushButton_2->setText("加入聊天室");
+    }
 }
 
 //处理成功连接到服务器的槽
 void TCP_Client::slot_connected()
 {
+    ui->pushButton->setEnabled(true);
     isconnected = true;
-    ui->textBrowser->append("成功连接到服务器   "+QDateTime::currentDateTime().toString("yyyy-M-dd hh:mm:ss"));
-    connect(tcp_socket,SIGNAL(readyRead()),this,SLOT(slot_recvMsg()));    //接受信息
-    connect(tcp_socket,SIGNAL(disconnected()),this,SLOT(slot_disconnected())); //服务器中断连接
+    QString Msg = "欢迎"+ui->lineEdit_2->text()+"进入聊天室";
+    tcp_socket->write(Msg.toUtf8());
 }
 
-//处理断开连接的槽
 void TCP_Client::slot_disconnected()
 {
     if(isconnected){
-        //QMessageBox::warning(this,"警告","与服务器断开连接");
-        ui->textBrowser->append("与服务器断开连接");
+        QString Msg = "恭送"+ui->lineEdit_2->text()+"离开聊天室";
+        tcp_socket->write(Msg.toUtf8());
         isconnected = false;
         tcp_socket->close();
         tcp_socket->deleteLater();
     }
 }
+
+
 
 //处理发送信息的槽
 void TCP_Client::slot_sendMsg()
@@ -64,8 +71,8 @@ void TCP_Client::slot_sendMsg()
         QString send_msg = ui->lineEdit->text();
         QString user_name = ui->lineEdit_2->text();
         if(!send_msg.isEmpty()){
-            QString local_display = QDateTime::currentDateTime().toString("yyyy-M-dd hh:mm:ss")+"\n"+ QString("%1:").arg(user_name)+send_msg;
-            ui->textBrowser->append(local_display);
+            //QString local_display = QDateTime::currentDateTime().toString("yyyy-M-dd hh:mm:ss")+"\n"+ QString("%1:").arg(user_name)+send_msg;
+            //ui->textBrowser->append(local_display);
             send_msg = user_name+": "+send_msg;
             tcp_socket->write(send_msg.toUtf8());
             ui->lineEdit->clear();
@@ -83,11 +90,8 @@ void TCP_Client::slot_recvMsg()
     QString recv_msg = tcp_socket->readAll();
     qDebug()<<recv_msg;
     if(!recv_msg.isEmpty()){
-        QString local_display = QDateTime::currentDateTime().toString("yyyy-M-dd hh::mm::ss")+"\n"+ "服务器:"+ recv_msg;
+        QString local_display = QDateTime::currentDateTime().toString("yyyy-M-dd hh::mm::ss")+"\n" + recv_msg;
         ui->textBrowser->append(local_display);
     }
 }
-
-
-
 

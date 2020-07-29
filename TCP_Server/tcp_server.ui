@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
-    <height>362</height>
+    <width>371</width>
+    <height>408</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,14 +18,28 @@
     <widget class="QTextBrowser" name="textBrowser"/>
    </item>
    <item row="1" column="0">
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QLabel" name="label">
      <property name="text">
-      <string>发送</string>
+      <string>端口号</string>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
     <widget class="QLineEdit" name="lineEdit"/>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QPushButton" name="pushButton">
+     <property name="text">
+      <string>创建聊天室</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QPushButton" name="pushButton_2">
+     <property name="text">
+      <string>关闭聊天室</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

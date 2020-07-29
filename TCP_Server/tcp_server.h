@@ -2,8 +2,7 @@
 #define TCP_SERVER_H
 
 #include <QWidget>
-#include<QTcpServer>
-#include<QTcpSocket>
+#include"server.h"
 
 namespace Ui {
 class TCP_Server;
@@ -17,15 +16,16 @@ public:
     explicit TCP_Server(QWidget *parent = nullptr);
     ~TCP_Server();
 protected slots:
-    void slot_newconnect();
-    void slot_sendMsg();
-    void slot_recvMsg();
-    void slot_disconnect();
+    void slot_update_widget(QString Msg);
+
+private slots:
+    void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
 
 private:
     Ui::TCP_Server *ui;
-    QTcpServer *tcp_server;
-    QTcpSocket *tcp_socket;
+    int port;
+    Server *server;
 };
 
 #endif // TCP_SERVER_H

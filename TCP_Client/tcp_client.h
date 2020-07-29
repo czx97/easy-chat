@@ -20,14 +20,18 @@ public:
 protected slots:
     void slot_sendMsg();
     void slot_recvMsg();
-    void slot_init();
     void slot_connected();
     void slot_disconnected();
+
+private slots:
+    void on_pushButton_2_clicked();
 
 private:
     Ui::Widget *ui;
     bool isconnected;
     QTcpSocket *tcp_socket;
+    QString ip ;
+    int port ;
 };
 
 #endif // WIDGET_H
