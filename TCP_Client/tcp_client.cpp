@@ -12,6 +12,8 @@ TCP_Client::TCP_Client(QWidget *parent) :
     setWindowTitle("TCP客户端");
     isconnected = false;
     ui->pushButton->setEnabled(false);
+    ui->lineEdit_3->setText("127.0.0.1");
+    ui->lineEdit_4->setText("9999");
 
     connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(slot_sendMsg()));  //发送信息
 }
@@ -28,8 +30,6 @@ void TCP_Client::on_pushButton_2_clicked()
     if(!isconnected){
         tcp_socket = new QTcpSocket();
         tcp_socket->abort();//重置套接字
-        ui->lineEdit_3->setText("127.0.0.1");
-        ui->lineEdit_4->setText("9999");
         ip = ui->lineEdit_3->text();
         port = ui->lineEdit_4->text().toInt();
         tcp_socket->connectToHost(ip,port);
